@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS products (
     sku TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
-    stock_qty INTEGER NOT NULL DEFAULT 0,
+    stock_qty INTEGER NOT NULL DEFAULT 0 CHECK (stock_qty >= 0),
     price INTEGER NOT NULL DEFAULT 0,
     image_path TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
