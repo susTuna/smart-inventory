@@ -17,4 +17,7 @@ type ProductRepository interface {
 type UserRepository interface {
 	Save(ctx context.Context, user *entity.User) error
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
+
+	GetByID(ctx context.Context, id string) (*entity.User, error)
+	Update(ctx context.Context, user *entity.User) error
 }

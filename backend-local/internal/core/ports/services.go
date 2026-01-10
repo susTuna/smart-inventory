@@ -23,3 +23,9 @@ type ProductService interface {
 	//AdjustStock (Stock Opname)
 	AdjustStock(ctx context.Context, sku string, realQty int, note string, userID *string) error
 }
+
+type UserService interface {
+	//Commands
+	Register(ctx context.Context, username, password string, role entity.UserRole) error
+	Login(ctx context.Context, username, password string) (*entity.User, error)
+}
