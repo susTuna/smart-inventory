@@ -1,0 +1,22 @@
+# Go Binaries & Vendor
+*.exe
+*.dll
+*.so
+vendor/
+go.sum
+
+# Local Databases (CRITICAL: Do not commit customer data)
+*.db
+*.sqlite
+*.db-journal
+
+# Flutter/Dart Build Artifacts
+**/build/
+**/.dart_tool/
+**/.packages
+**/.pub/
+
+# IDE Settings
+.vscode/
+.idea/
+*.iml
