@@ -17,36 +17,6 @@ func SetupTestDB(t *testing.T) *sqlite.DB {
 		t.Fatalf("Failed to open test db: %v", err)
 	}
 
-	// Manually run the creation script (In real app, read from file)
-	schema := `
-	PRAGMA foreign_keys = ON;
-	CREATE TABLE products (
-		sku TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		description TEXT,
-		stock_qty INTEGER NOT NULL DEFAULT 0,
-		price INTEGER NOT NULL DEFAULT 0,
-		image_path TEXT,
-		created_at DATETIME,
-		updated_at DATETIME
-	);
-	CREATE TABLE stock_movements (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		sku_id TEXT NOT NULL,
-		user_id TEXT,
-		change_amount INTEGER NOT NULL,
-		type TEXT NOT NULL,
-		reference_id TEXT,
-		note TEXT,
-		created_at DATETIME,
-		FOREIGN KEY (sku_id) REFERENCES products(sku)
-	);
-	`
-	err = db.ExecuteMigration(context.Background(), schema)
-	if err != nil {
-		t.Fatalf("Failed to migrate: %v", err)
-	}
-
 	return db
 }
 

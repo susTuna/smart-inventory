@@ -9,48 +9,15 @@ import (
 	"github.com/susTuna/smart-inventory/backend-local/internal/core/service"
 )
 
-// SetupServiceIntegration creates a real in-memory stack (DB -> Repo -> Service)
 func SetupServiceIntegration(t *testing.T) (*sqlite.DB, service.ProductService) {
 	db, err := sqlite.NewConnection(":memory:")
 	if err != nil {
 		t.Fatalf("Failed to open test db: %v", err)
 	}
 
-	// 1. Run Schema (Same as before)
-	schema := `
-	PRAGMA foreign_keys = ON;
-	CREATE TABLE products (
-		sku TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		description TEXT,
-		stock_qty INTEGER NOT NULL DEFAULT 0 CHECK (stock_qty >= 0), -- The Constraint
-		price INTEGER NOT NULL DEFAULT 0,
-		image_path TEXT,
-		created_at DATETIME,
-		updated_at DATETIME
-	);
-	CREATE TABLE stock_movements (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		sku_id TEXT NOT NULL,
-		user_id TEXT,
-		change_amount INTEGER NOT NULL,
-		type TEXT NOT NULL,
-		reference_id TEXT,
-		note TEXT,
-		created_at DATETIME,
-		FOREIGN KEY (sku_id) REFERENCES products(sku)
-	);
-	`
-	if err := db.ExecuteMigration(context.Background(), schema); err != nil {
-		t.Fatalf("Migration failed: %v", err)
-	}
-
-	// 2. Wire up dependencies
 	productRepo := repo.NewProductRepo(db)
 	productService := service.NewProductService(productRepo)
 
-	// We cast back to struct to access methods, though in real app we use interface
-	// In tests, we are testing the concrete implementation usually.
 	return db, *productService.(*service.ProductService)
 }
 

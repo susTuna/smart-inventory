@@ -10,27 +10,10 @@ import (
 	"github.com/susTuna/smart-inventory/backend-local/internal/core/service"
 )
 
-// SetupUserServiceIntegration initializes DB and Service for User tests
 func SetupUserServiceIntegration(t *testing.T) (*sqlite.DB, *service.UserService) {
 	db, err := sqlite.NewConnection(":memory:")
 	if err != nil {
 		t.Fatalf("Failed to open test db: %v", err)
-	}
-
-	// Minimal Schema for Users
-	schema := `
-	CREATE TABLE users (
-		id TEXT PRIMARY KEY,
-		username TEXT NOT NULL UNIQUE,
-		password_hash TEXT NOT NULL,
-		role TEXT NOT NULL DEFAULT 'STAFF',
-		is_active BOOLEAN NOT NULL DEFAULT 1,
-		created_at DATETIME,
-		updated_at DATETIME
-	);
-	`
-	if err := db.ExecuteMigration(context.Background(), schema); err != nil {
-		t.Fatalf("Migration failed: %v", err)
 	}
 
 	userRepo := repo.NewUserRepo(db)
