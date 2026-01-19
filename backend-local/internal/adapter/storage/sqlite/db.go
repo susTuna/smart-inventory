@@ -14,6 +14,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+//go:embed migrations/*.sql
 var migrationsFS embed.FS
 
 type DB struct {

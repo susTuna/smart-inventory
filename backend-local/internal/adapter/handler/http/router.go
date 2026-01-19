@@ -20,11 +20,11 @@ func NewRouter(userSvc ports.UserService, productSvc ports.ProductService) *chi.
 	r.Group(func(r chi.Router) {
 		r.Use(AuthMiddleware)
 
-		r.Get("api/v1/products", productHandler.List)
-		r.Post("api/v1/products", productHandler.Create)
+		r.Get("/api/v1/products", productHandler.List)
+		r.Post("/api/v1/products", productHandler.Create)
 
-		r.Post("api/v1/products/{sku}/restock", productHandler.Restock)
-		r.Post("api/v1/products/{sku}/deduct", productHandler.Deduct)
+		r.Post("/api/v1/products/{sku}/restock", productHandler.Restock)
+		r.Post("/api/v1/products/{sku}/deduct", productHandler.Deduct)
 	})
 
 	return r
