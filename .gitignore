@@ -20,3 +20,17 @@ go.sum
 .vscode/
 .idea/
 *.iml
+
+# Environment vars
+*.env
+
+# Certs
+*.crt
+*.key
+*.pem
+*.srl
+*.cnf
+*.csr
+
+# Exclusion
+!Dockerfile.db
