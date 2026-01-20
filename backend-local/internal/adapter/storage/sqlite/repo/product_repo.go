@@ -59,6 +59,16 @@ func (r *SQLiteProductRepo) GetByID(ctx context.Context, sku string) (*entity.Pr
 	return &p, nil
 }
 
+func (r *SQLiteProductRepo) GetByBarcode(ctx context.Context, barcode string) (*entity.Product, error) {
+	query := `
+		SELECT p.sku, p.name, p.description, p.stock_qty, p.price, p.image_path, p.created_at, p.updated_at
+		FROM products p
+		JOIN product_barcodes b ON p.sku = b.sku_id
+		WHERE b.barcode = ?
+	`
+	return r.scanProduct(ctx, query, barcode)
+}
+
 func (r *SQLiteProductRepo) List(ctx context.Context, limit, offset int) ([]entity.Product, error) {
 	query := `SELECT sku, name, description, stock_qty, price, image_path, created_at, updated_at FROM products LIMIT ? OFFSET ?`
 	
@@ -119,4 +129,29 @@ func (r *SQLiteProductRepo) AdjustStock(ctx context.Context, m *entity.StockMove
 
 	// 3. Commit Transaction
 	return tx.Commit()
+}
+
+func (r *SQLiteProductRepo) AddBarcode(ctx context.Context, sku string, barcode string) error {
+	query := `INSERT INTO product_barcodes (barcode, sku_id) VALUES (?, ?)`
+	_, err := r.db.ExecContext(ctx, query, barcode, sku)
+	return err
+}
+
+func (r *SQLiteProductRepo) scanProduct(ctx context.Context, query string, args ...interface{}) (*entity.Product, error) {
+	row := r.db.QueryRowContext(ctx, query, args...)
+
+	var p entity.Product
+	var desc, img sql.NullString
+
+	err := row.Scan(&p.SKU, &p.Name, &desc, &p.StockQty, &p.Price, &img, &p.CreatedAt, &p.UpdatedAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	p.Description = desc.String
+	p.ImagePath = img.String
+	return &p, nil
 }

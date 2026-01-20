@@ -8,7 +8,9 @@ import (
 type ProductRepository interface {
 	Save(ctx context.Context, product *entity.Product) error
 	GetByID(ctx context.Context, sku string) (*entity.Product, error)
+	GetByBarcode(ctx context.Context, barcode string) (*entity.Product, error)
 	List(ctx context.Context, limit, offset int) ([]entity.Product, error)
+	AddBarcode(ctx context.Context, sku string, barcode string) error
 	
 	// Transactional Logic
 	AdjustStock(ctx context.Context, movement *entity.StockMovement) error

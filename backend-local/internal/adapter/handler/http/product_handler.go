@@ -29,6 +29,10 @@ type stockOpReq struct {
 	Note string `json:"note"`
 }
 
+type scanReq struct {
+	Barcode string `json:"barcode"`
+}
+
 func (h *ProductHandler) List(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	size, _ := strconv.Atoi(r.URL.Query().Get("size"))

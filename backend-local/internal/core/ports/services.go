@@ -9,9 +9,11 @@ type ProductService interface {
 	//Queries
 	ListProducts(ctx context.Context, page, pageSize int) ([]entity.Product, error)
 	GetProduct(ctx context.Context, sku string) (*entity.Product, error)
+	GetProductByBarcode(ctx context.Context, barcode string) (*entity.Product, error)
 	
 	//Commands
 	CreateProduct(ctx context.Context, sku, name string, price int64) error
+	AddBarcode(ctx context.Context, sku, newBarcode string) error
 
 	//Stock ops
 	//Restock (inbound)
