@@ -62,6 +62,26 @@ func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, "Product Created")
 }
 
+func (h *ProductHandler) Scan(w http.ResponseWriter, r *http.Request) {
+	var req scanReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid JSON")
+		return
+	}
+
+	product, err := h.svc.GetProductByBarcode(r.Context(), req.Barcode)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if product != nil {
+		response.Error(w, http.StatusNotFound, "Product not found")
+		return
+	}
+
+	response.Success(w, product)
+}
+
 func (h *ProductHandler) Restock(w http.ResponseWriter, r *http.Request) {
 	sku := chi.URLParam(r, "sku")
 	userID :=  r.Context().Value("userID").(string)

@@ -23,6 +23,8 @@ func NewRouter(userSvc ports.UserService, productSvc ports.ProductService) *chi.
 		r.Get("/api/v1/products", productHandler.List)
 		r.Post("/api/v1/products", productHandler.Create)
 
+		r.Post("/api/v1/scan", productHandler.Scan)
+		
 		r.Post("/api/v1/products/{sku}/restock", productHandler.Restock)
 		r.Post("/api/v1/products/{sku}/deduct", productHandler.Deduct)
 	})
