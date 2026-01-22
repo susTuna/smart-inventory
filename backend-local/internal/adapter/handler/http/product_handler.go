@@ -74,7 +74,7 @@ func (h *ProductHandler) Scan(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if product != nil {
+	if product == nil {
 		response.Error(w, http.StatusNotFound, "Product not found")
 		return
 	}
