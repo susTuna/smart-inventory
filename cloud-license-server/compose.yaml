@@ -15,12 +15,13 @@ services:
     depends_on:
       license-db:
         condition: service_healthy
-    restart: on-failure
+    restart: unless-stopped
   
   license-db:
     build:
       context: .
       dockerfile: Dockerfile.db
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASSWORD}
