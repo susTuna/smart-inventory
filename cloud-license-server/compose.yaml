@@ -1,0 +1,45 @@
+services:
+  license-app:
+    build: .
+    ports:
+      - "${APP_PORT}:9000"
+    environment:
+      - PORT=${APP_PORT}
+      - LICENSE_PRIVATE_KEY=${LICENSE_PRIVATE_KEY}
+      - PGSSLROOTCERT=/root/.postgresql/root.crt
+      - DATABASE_URL=postgres://${PG_USER}:${PG_PASSWORD}@license-db:5432/${PG_DB}?sslmode=verify-full
+    volumes:
+      - ./certs/root.crt:/root/.postgresql/root.crt:ro
+    networks:
+      - license-net
+    depends_on:
+      license-db:
+        condition: service_healthy
+    restart: unless-stopped
+  
+  license-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
+    command: >
+      postgres
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/server.crt
+      -c ssl_key_file=/var/lib/postgresql/server.key
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -U ${PG_USER} -d ${PG_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - license-net
+
+networks:
+  license-net:
+    driver: bridge
